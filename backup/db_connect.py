@@ -2,7 +2,7 @@ import mysql.connector
 import psycopg2
 import pymongo
 
-def db_connect(db_type, config):
+def db_connect(db_type, config, logger):
     try:
         match db_type:
             case "mysql":
@@ -15,8 +15,10 @@ def db_connect(db_type, config):
                 conn = pymongo.MongoClient(
                     f"mongodb://{config['host']}:{config['port']}")
         print("Connection successful")
+        logger.info("Connection successful")
         return conn
     except Exception as e:
         print(f"Connection failed: {e}")
+        logger.error(f"Connection failed: {e}")
         return None
     

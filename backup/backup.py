@@ -17,9 +17,14 @@ def db_backup(db_type, db_name, config, output_file, logger):
                 command = ["mongodump", "--db", db_name, "--out", output_file]
                 subprocess.run(command, check=True)
                 logger.info(f"MongoDB backup of {db_name} completed successfully, saved to {output_file}")
+            case _:
+                logger.error(f"Unsupported database type: {db_type}")
+                raise ValueError(f"Unsupported database type: {db_type}")
+                
     except subprocess.SubprocessError() as e:
         logger.error(f"Error occurred during backup of {db_name} with {db_type}: {e}")
         raise
+
     except Exception as e:
         logger.error(f"Unexpected error during backup: {e}")
         raise
