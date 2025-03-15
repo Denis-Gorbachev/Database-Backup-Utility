@@ -4,6 +4,7 @@ import json
 import backup.db_connect as db_connect
 import backup.backup as backup
 import backup.restore as restore
+import backup.compression as compression
 
 def setup_logging(log_file):
     logging.basicConfig(
@@ -48,7 +49,10 @@ def main():
         if args.operation == 'backup':
             conn = db_connect.db_connect(args.db_type, db_config, logging)
             if conn:
-                backup.db_backup(args.db_type, db_config['database'], db_config, args.output, logging)
+                backup_file = backup.db_backup(args.db_type, db_config['database'], db_config, args.output, logging)
+                if args.compress:
+                    compression.compress_backup(backup_file, args.output + ".tar.gz", logging)
+                    logging.info(f"Backup compressed to {args.output}.tar.gz file")
         elif args.operation == 'restore':
             restore.db_restore(args.db_type, db_config['database'], db_config, args.output, logging)
     except Exception as e:
